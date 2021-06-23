@@ -6,8 +6,31 @@ import cv2
 import mediapipe as mp
 import numpy as np
 
+# for TCP connection with unity
+import socket
+from collections import deque
+from platform import system
+
 from pose_estimator import PoseEstimator
 from stabilizer import Stabilizer
+
+connect = True
+port = 5066         # have to be same as unity
+
+# init TCP connection with unity
+# return the socket connected
+def init_TCP():
+    address = ('127.0.0.1', port)
+    # address = ('192.168.0.107', port)
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    # print(socket.gethostbyname(socket.gethostname()))
+    s.connect(address)
+    return s
+
+def send_info_to_unity(s, args):
+    msg = '%.4f %.4f %.4f' % args
+    s.send(bytes(msg, "utf-8"))
+
 
 def main():
 
@@ -34,6 +57,11 @@ def main():
         measure_num=1,
         cov_process=0.1,
         cov_measure=0.1) for _ in range(6)]
+
+
+    # Initialize TCP connection
+    if connect:
+        socket = init_TCP()
 
     while cap.isOpened():
         success, img = cap.read()
@@ -101,11 +129,6 @@ def main():
 
 
             # calculate the roll/ pitch/ yaw
-            # roll = steady_pose[0][0]
-            # pitch
-            # yaw
-
-            # Method 1
             # roll: +ve when the axis pointing upward
             # pitch: +ve when we look upward
             # yaw: +ve when we look left
@@ -114,6 +137,10 @@ def main():
             yaw =  np.clip(np.degrees(steady_pose[0][2]), -90, 90)
 
             print("Roll: %.2f, Pitch: %.2f, Yaw: %.2f" % (roll, pitch, yaw))
+
+            # send info to unity
+            if connect:
+                send_info_to_unity(socket, (roll, pitch, yaw))
 
 
             # pose_estimator.draw_annotation_box(img, pose[0], pose[1], color=(255, 128, 128))
