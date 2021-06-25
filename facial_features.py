@@ -64,6 +64,62 @@ class FacialFeatures:
 
         return cv2.resize(img, (width, height), interpolation = cv2.INTER_AREA)
 
+    def eye_aspect_ratio(image_points, side):
+
+        p1, p2, p3, p4, p5, p6 = 0, 0, 0, 0, 0, 0
+        tip_of_eyebrow = 0
+
+        # get the contour points at img pixel first
+        # following the eye aspect ratio formula with little modifications
+        # to match the facemesh model
+        if side == Eyes.LEFT:
+
+            eye_key_left = FacialFeatures.eye_key_indicies[0]
+
+            p2 = np.true_divide(
+                np.sum([image_points[eye_key_left[10]], image_points[eye_key_left[11]]], axis=0),
+                2)
+            p3 = np.true_divide(
+                np.sum([image_points[eye_key_left[13]], image_points[eye_key_left[14]]], axis=0),
+                2)
+            p6 = np.true_divide(
+                np.sum([image_points[eye_key_left[2]], image_points[eye_key_left[3]]], axis=0),
+                2)
+            p5 = np.true_divide(
+                np.sum([image_points[eye_key_left[5]], image_points[eye_key_left[6]]], axis=0),
+                2)
+            p1 = image_points[eye_key_left[0]]
+            p4 = image_points[eye_key_left[7]]
+
+            tip_of_eyebrow = image_points[105]
+
+        elif side == Eyes.RIGHT:
+            eye_key_right = FacialFeatures.eye_key_indicies[1]
+
+            p3 = np.true_divide(
+                np.sum([image_points[eye_key_right[10]], image_points[eye_key_right[11]]], axis=0),
+                2)
+            p2 = np.true_divide(
+                np.sum([image_points[eye_key_right[13]], image_points[eye_key_right[14]]], axis=0),
+                2)
+            p5 = np.true_divide(
+                np.sum([image_points[eye_key_right[2]], image_points[eye_key_right[3]]], axis=0),
+                2)
+            p6 = np.true_divide(
+                np.sum([image_points[eye_key_right[5]], image_points[eye_key_right[6]]], axis=0),
+                2)
+            p1 = image_points[eye_key_right[7]]
+            p4 = image_points[eye_key_right[0]]
+
+            tip_of_eyebrow = image_points[334]
+
+        # https://downloads.hindawi.com/journals/cmmm/2020/1038906.pdf
+        # Fig (3)
+        ear = np.linalg.norm(p2-p6) + np.linalg.norm(p3-p5)
+        ear /= (2 * np.linalg.norm(p1-p4) + 1e-6)
+        ear = ear * (np.linalg.norm(tip_of_eyebrow-image_points[2]) / np.linalg.norm(image_points[6]-image_points[2]))
+        return ear
+
     def detect_iris(img, marks, side):
         """
         return:
@@ -113,8 +169,8 @@ class FacialFeatures:
             eye_gray = cv2.cvtColor(eye, cv2.COLOR_BGR2GRAY)
 
             eye_gray = cv2.GaussianBlur(eye_gray, (5, 5), 0)
-            cv2.imshow("left eye gray" if side == Eyes.LEFT else "right eye gray",
-                FacialFeatures.resize_img(eye_gray, 300))
+            # cv2.imshow("left eye gray" if side == Eyes.LEFT else "right eye gray",
+            #     FacialFeatures.resize_img(eye_gray, 300))
 
             # TODO:
             # follow tutorial for eye-motion tracking
@@ -125,7 +181,7 @@ class FacialFeatures:
                 left_eye_threshold if side == Eyes.LEFT else right_eye_threshold,
                 255, cv2.THRESH_BINARY_INV)
 
-            cv2.imshow("left eye threshold" if side == Eyes.LEFT else "right eye threshold", threshold)
+            # cv2.imshow("left eye threshold" if side == Eyes.LEFT else "right eye threshold", threshold)
 
             # search for contours and get the largest one
             contours, _ = cv2.findContours(threshold, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
@@ -149,8 +205,8 @@ class FacialFeatures:
             x_ratio = np.clip(x_center / (max_x - min_x - margin * 2), 0, 1)
             y_ratio = np.clip(y_center / (max_y - min_y - margin * 2), 0, 1)
 
-            cv2.imshow("left eye" if side == Eyes.LEFT else "right eye",
-                FacialFeatures.resize_img(eye, 300))
+            # cv2.imshow("left eye" if side == Eyes.LEFT else "right eye",
+            #     FacialFeatures.resize_img(eye, 300))
 
             return x_center + (min_x - margin), y_center + (min_y - margin), x_ratio, y_ratio
 

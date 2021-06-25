@@ -2,6 +2,7 @@
 Main program to run the detection
 """
 
+from argparse import ArgumentParser
 import cv2
 import mediapipe as mp
 import numpy as np
@@ -22,7 +23,6 @@ from stabilizer import Stabilizer
 from facial_features import FacialFeatures, Eyes
 
 # global variable
-connect = False
 port = 5066         # have to be same as unity
 
 # init TCP connection with unity
@@ -36,7 +36,8 @@ def init_TCP():
     return s
 
 def send_info_to_unity(s, args):
-    msg = '%.4f %.4f %.4f' % args
+    msg = '%.4f ' * len(args) % args
+    print(msg)
     s.send(bytes(msg, "utf-8"))
 
 def main():
@@ -69,7 +70,7 @@ def main():
 
 
     # Initialize TCP connection
-    if connect:
+    if args.connect:
         socket = init_TCP()
 
     while cap.isOpened():
@@ -106,6 +107,9 @@ def main():
 
             pose_eye = [x_ratio_left, y_ratio_left, x_ratio_right, y_ratio_right]
 
+            ear_left = FacialFeatures.eye_aspect_ratio(image_points, Eyes.LEFT)
+            ear_right = FacialFeatures.eye_aspect_ratio(image_points, Eyes.RIGHT)
+
             # print("left eye: %d, %d, %.2f, %.2f" % (x_left, y_left, x_ratio_left, y_ratio_left))
             # print("right eye: %d, %d, %.2f, %.2f" % (x_right, y_right, x_ratio_right, y_ratio_right))
 
@@ -140,14 +144,15 @@ def main():
             pitch = np.clip(-(180 + np.degrees(steady_pose[0][0])), -90, 90)
             yaw =  np.clip(np.degrees(steady_pose[0][2]), -90, 90)
 
-            print("Roll: %.2f, Pitch: %.2f, Yaw: %.2f" % (roll, pitch, yaw))
-            print("left eye: %.2f, %.2f; right eye %.2f, %.2f"
-                % (steady_pose_eye[0], steady_pose_eye[1], steady_pose_eye[2], steady_pose_eye[3]))
+            # print("Roll: %.2f, Pitch: %.2f, Yaw: %.2f" % (roll, pitch, yaw))
+            # print("left eye: %.2f, %.2f; right eye %.2f, %.2f"
+            #     % (steady_pose_eye[0], steady_pose_eye[1], steady_pose_eye[2], steady_pose_eye[3]))
+            # print("EAR_LEFT: %.2f; EAR_RIGHT: %.2f" % (ear_left, ear_right))
 
             # send info to unity
-            if connect:
+            if args.connect:
                 send_info_to_unity(socket,
-                (roll, pitch, yaw))
+                (roll, pitch, yaw, ear_left, ear_right))
 
 
             # pose_estimator.draw_annotation_box(img, pose[0], pose[1], color=(255, 128, 128))
@@ -173,5 +178,12 @@ def main():
 
 
 if __name__ == "__main__":
+
+    parser = ArgumentParser()
+    parser.add_argument("--connect", action="store_true",
+                        help="connect to unity character",
+                        default=False)
+    args = parser.parse_args()
+
     # demo code
     main()
