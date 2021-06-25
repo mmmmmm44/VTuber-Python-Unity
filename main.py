@@ -18,6 +18,9 @@ from facial_landmark import FaceMeshDetector
 from pose_estimator import PoseEstimator
 from stabilizer import Stabilizer
 
+# Miscellaneous detections (eyes/ mouth...)
+from facial_features import FacialFeatures, Eyes
+
 # global variable
 connect = False
 port = 5066         # have to be same as unity
@@ -57,6 +60,13 @@ def main():
         cov_process=0.1,
         cov_measure=0.1) for _ in range(6)]
 
+    # for eyes
+    eyes_stabilizers = [Stabilizer(
+        state_num=2,
+        measure_num=1,
+        cov_process=0.1,
+        cov_measure=0.1) for _ in range(4)]
+
 
     # Initialize TCP connection
     if connect:
@@ -75,7 +85,10 @@ def main():
         # 3. estimate pose
 
         # first two steps
-        img, faces = detector.findFaceMesh(img)
+        img_facemesh, faces = detector.findFaceMesh(img)
+
+        # flip the input image so that it matches the facemesh stuff
+        img = cv2.flip(img, 1)
 
         # if there is any face detected
         if faces:
@@ -87,6 +100,14 @@ def main():
             # The third step: pose estimation
             # pose: [[rvec], [tvec]]
             pose = pose_estimator.solve_pose_by_all_points(image_points)
+
+            x_left, y_left, x_ratio_left, y_ratio_left = FacialFeatures.detect_iris(img, faces[0], Eyes.LEFT)
+            x_right, y_right, x_ratio_right, y_ratio_right = FacialFeatures.detect_iris(img, faces[0], Eyes.RIGHT)
+
+            pose_eye = [x_ratio_left, y_ratio_left, x_ratio_right, y_ratio_right]
+
+            # print("left eye: %d, %d, %.2f, %.2f" % (x_left, y_left, x_ratio_left, y_ratio_left))
+            # print("right eye: %d, %d, %.2f, %.2f" % (x_right, y_right, x_ratio_right, y_ratio_right))
 
             # print("rvec (y) = (%f): " % (pose[0][1]))
             # print("rvec (x, y, z) = (%f, %f, %f): " % (pose[0][0], pose[0][1], pose[0][2]))
@@ -102,6 +123,12 @@ def main():
 
             steady_pose = np.reshape(steady_pose, (-1, 3))
 
+            # stabilize the eyes value
+            steady_pose_eye = []
+            for value, ps_stb in zip(pose_eye, eyes_stabilizers):
+                ps_stb.update([value])
+                steady_pose_eye.append(ps_stb.state[0])
+
             # print("rvec (x, y, z) = (%f, %f, %f): " % (steady_pose[0][0], steady_pose[0][1], steady_pose[0][2]))
             # print("tvec steady (x, y, z) = (%f, %f, %f): " % (steady_pose[1][0], steady_pose[1][1], steady_pose[1][2]))
 
@@ -114,26 +141,29 @@ def main():
             yaw =  np.clip(np.degrees(steady_pose[0][2]), -90, 90)
 
             print("Roll: %.2f, Pitch: %.2f, Yaw: %.2f" % (roll, pitch, yaw))
+            print("left eye: %.2f, %.2f; right eye %.2f, %.2f"
+                % (steady_pose_eye[0], steady_pose_eye[1], steady_pose_eye[2], steady_pose_eye[3]))
 
             # send info to unity
             if connect:
-                send_info_to_unity(socket, (roll, pitch, yaw))
+                send_info_to_unity(socket,
+                (roll, pitch, yaw))
 
 
             # pose_estimator.draw_annotation_box(img, pose[0], pose[1], color=(255, 128, 128))
 
             # pose_estimator.draw_axis(img, pose[0], pose[1])
 
-            pose_estimator.draw_axes(img, steady_pose[0], steady_pose[1])
+            pose_estimator.draw_axes(img_facemesh, steady_pose[0], steady_pose[1])
 
         else:
             # reset our pose estimator
-            pose_estimator = PoseEstimator((img.shape[0], img.shape[1]))
+            pose_estimator = PoseEstimator((img_facemesh.shape[0], img_facemesh.shape[1]))
 
 
         # flip vertically at the end for creating mirror img
         # img = cv2.flip(img, 1)
-        cv2.imshow('Facial landmark', img)
+        cv2.imshow('Facial landmark', img_facemesh)
 
         # press "q" to leave
         if cv2.waitKey(1) & 0xFF == ord('q'):

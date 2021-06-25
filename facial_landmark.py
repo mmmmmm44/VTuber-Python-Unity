@@ -68,7 +68,7 @@ class FaceMeshDetector:
         return img, self.faces
 
 
-# sample run of the module 
+# sample run of the module
 def main():
 
     detector = FaceMeshDetector()
@@ -84,8 +84,8 @@ def main():
 
         img, faces = detector.findFaceMesh(img)
 
-        if faces:
-            print(faces[0])
+        # if faces:
+        #     print(faces[0])
 
         cv2.imshow('MediaPipe FaceMesh', img)
 
