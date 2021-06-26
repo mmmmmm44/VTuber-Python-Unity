@@ -64,6 +64,8 @@ class FacialFeatures:
 
         return cv2.resize(img, (width, height), interpolation = cv2.INTER_AREA)
 
+    # calculate eye apsect ratio to detect blinking
+    # and/ or control closing/ opening of eye
     def eye_aspect_ratio(image_points, side):
 
         p1, p2, p3, p4, p5, p6 = 0, 0, 0, 0, 0, 0
@@ -120,6 +122,23 @@ class FacialFeatures:
         ear = ear * (np.linalg.norm(tip_of_eyebrow-image_points[2]) / np.linalg.norm(image_points[6]-image_points[2]))
         return ear
 
+    # calculate mouth aspect ratio to detect mouth movement
+    # to control opening/ closing of mouth in avatar
+    # https://miro.medium.com/max/1508/0*0rVqugQAUafxXYXE.jpg
+    def mouth_aspect_ratio(image_points):
+        p1 = image_points[78]
+        p2 = image_points[81]
+        p3 = image_points[13]
+        p4 = image_points[311]
+        p5 = image_points[308]
+        p6 = image_points[402]
+        p7 = image_points[14]
+        p8 = image_points[178]
+
+        mar = np.linalg.norm(p2-p8) + np.linalg.norm(p3-p7) + np.linalg.norm(p4-p6)
+        mar /= (2 * np.linalg.norm(p1-p5) + 1e-6)
+        return mar
+
     def detect_iris(img, marks, side):
         """
         return:
@@ -172,7 +191,6 @@ class FacialFeatures:
             # cv2.imshow("left eye gray" if side == Eyes.LEFT else "right eye gray",
             #     FacialFeatures.resize_img(eye_gray, 300))
 
-            # TODO:
             # follow tutorial for eye-motion tracking
             # https://youtu.be/kbdbZFT9NQI
 
@@ -194,9 +212,9 @@ class FacialFeatures:
             x_center, y_center = x + int(w / 2), y + int(h / 2)
 
             # drawing
-            cv2.rectangle(eye, (x, y), (x+w, y+h), (255, 0, 0), 1)
-            cv2.line(eye, (x_center, 0), (x_center, eye.shape[0]), (0, 255, 0), 1)
-            cv2.line(eye, (0, y_center), (eye.shape[1], y_center), (0, 255, 0), 1)
+            # cv2.rectangle(eye, (x, y), (x+w, y+h), (255, 0, 0), 1)
+            # cv2.line(eye, (x_center, 0), (x_center, eye.shape[0]), (0, 255, 0), 1)
+            # cv2.line(eye, (0, y_center), (eye.shape[1], y_center), (0, 255, 0), 1)
 
             # print("%d, %d, %d, %d" % (min_x + margin, max_x - margin, min_y + margin, max_y - margin))
             # print("right eye: %d, %d, %.2f, %.2f" % (x_right, y_right, x_ratio_right, y_ratio_right))

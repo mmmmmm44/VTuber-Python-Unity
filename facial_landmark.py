@@ -63,6 +63,9 @@ class FaceMeshDetector:
                     x, y = int(lmk.x * self.imgW), int(lmk.y * self.imgH)
                     face.append([x, y])
 
+                    # show the id of each point on the image
+                    # cv2.putText(img, str(id), (x-4, y-4), cv2.FONT_HERSHEY_SIMPLEX, 0.3, (255, 0, 0), 1, cv2.LINE_AA)
+
                 self.faces.append(face)
 
         return img, self.faces

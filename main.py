@@ -110,6 +110,8 @@ def main():
             ear_left = FacialFeatures.eye_aspect_ratio(image_points, Eyes.LEFT)
             ear_right = FacialFeatures.eye_aspect_ratio(image_points, Eyes.RIGHT)
 
+            mar = FacialFeatures.mouth_aspect_ratio(image_points)
+
             # print("left eye: %d, %d, %.2f, %.2f" % (x_left, y_left, x_ratio_left, y_ratio_left))
             # print("right eye: %d, %d, %.2f, %.2f" % (x_right, y_right, x_ratio_right, y_ratio_right))
 
@@ -148,11 +150,12 @@ def main():
             # print("left eye: %.2f, %.2f; right eye %.2f, %.2f"
             #     % (steady_pose_eye[0], steady_pose_eye[1], steady_pose_eye[2], steady_pose_eye[3]))
             # print("EAR_LEFT: %.2f; EAR_RIGHT: %.2f" % (ear_left, ear_right))
+            # print("MAR: %.2f" % mar)
 
             # send info to unity
             if args.connect:
                 send_info_to_unity(socket,
-                (roll, pitch, yaw, ear_left, ear_right))
+                (roll, pitch, yaw, ear_left, ear_right, mar))
 
 
             # pose_estimator.draw_annotation_box(img, pose[0], pose[1], color=(255, 128, 128))
@@ -168,7 +171,7 @@ def main():
 
         # flip vertically at the end for creating mirror img
         # img = cv2.flip(img, 1)
-        cv2.imshow('Facial landmark', img_facemesh)
+        cv2.imshow('Facial landmark', FacialFeatures.resize_img(img_facemesh, 150))
 
         # press "q" to leave
         if cv2.waitKey(1) & 0xFF == ord('q'):
