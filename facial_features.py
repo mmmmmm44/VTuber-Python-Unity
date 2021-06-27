@@ -139,6 +139,12 @@ class FacialFeatures:
         mar /= (2 * np.linalg.norm(p1-p5) + 1e-6)
         return mar
 
+    def mouth_distance(image_points):
+        p1 = image_points[78]
+        p5 = image_points[308]
+        return np.linalg.norm(p1-p5)
+
+
     def detect_iris(img, marks, side):
         """
         return:

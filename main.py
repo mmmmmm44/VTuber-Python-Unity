@@ -68,6 +68,14 @@ def main():
         cov_process=0.1,
         cov_measure=0.1) for _ in range(4)]
 
+    # for mouth_dist
+    mouth_dist_stabilizer = Stabilizer(
+        state_num=2,
+        measure_num=1,
+        cov_process=0.1,
+        cov_measure=0.1
+    )
+
 
     # Initialize TCP connection
     if args.connect:
@@ -111,6 +119,7 @@ def main():
             ear_right = FacialFeatures.eye_aspect_ratio(image_points, Eyes.RIGHT)
 
             mar = FacialFeatures.mouth_aspect_ratio(image_points)
+            mouth_distance = FacialFeatures.mouth_distance(image_points)
 
             # print("left eye: %d, %d, %.2f, %.2f" % (x_left, y_left, x_ratio_left, y_ratio_left))
             # print("right eye: %d, %d, %.2f, %.2f" % (x_right, y_right, x_ratio_right, y_ratio_right))
@@ -135,6 +144,9 @@ def main():
                 ps_stb.update([value])
                 steady_pose_eye.append(ps_stb.state[0])
 
+            mouth_dist_stabilizer.update([mouth_distance])
+            steady_mouth_dist = mouth_dist_stabilizer.state[0]
+
             # print("rvec (x, y, z) = (%f, %f, %f): " % (steady_pose[0][0], steady_pose[0][1], steady_pose[0][2]))
             # print("tvec steady (x, y, z) = (%f, %f, %f): " % (steady_pose[1][0], steady_pose[1][1], steady_pose[1][2]))
 
@@ -150,12 +162,21 @@ def main():
             # print("left eye: %.2f, %.2f; right eye %.2f, %.2f"
             #     % (steady_pose_eye[0], steady_pose_eye[1], steady_pose_eye[2], steady_pose_eye[3]))
             # print("EAR_LEFT: %.2f; EAR_RIGHT: %.2f" % (ear_left, ear_right))
-            # print("MAR: %.2f" % mar)
+            # print("MAR: %.2f; Mouth Distance: %.2f" % (mar, steady_mouth_dist))
 
             # send info to unity
             if args.connect:
+                # for sending to unity chan
+                # send_info_to_unity(socket,
+                #     (roll, pitch, yaw, ear_left, ear_right, mar)
+                # )
+
+                # for sending to live2d model (Hiyori)
                 send_info_to_unity(socket,
-                (roll, pitch, yaw, ear_left, ear_right, mar))
+                    (roll, pitch, yaw,
+                    ear_left, ear_right, x_ratio_left, y_ratio_left, x_ratio_right, y_ratio_right,
+                    mar, mouth_distance)
+                )
 
 
             # pose_estimator.draw_annotation_box(img, pose[0], pose[1], color=(255, 128, 128))
@@ -171,7 +192,7 @@ def main():
 
         # flip vertically at the end for creating mirror img
         # img = cv2.flip(img, 1)
-        cv2.imshow('Facial landmark', FacialFeatures.resize_img(img_facemesh, 150))
+        cv2.imshow('Facial landmark', img_facemesh)
 
         # press "q" to leave
         if cv2.waitKey(1) & 0xFF == ord('q'):
