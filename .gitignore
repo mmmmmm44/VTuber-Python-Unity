@@ -1,10 +1,7 @@
 *.png
 *.jpg
 __*
-hiyori*
-CubismSdk*
-UnityChan*
-miku*
+Assets
 build
 main_*
 dist

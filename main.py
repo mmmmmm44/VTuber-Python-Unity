@@ -42,7 +42,7 @@ def send_info_to_unity(s, args):
 
 def main():
 
-    cap = cv2.VideoCapture(0)
+    cap = cv2.VideoCapture(args.cam)
 
     # Facemesh
     detector = FaceMeshDetector()
@@ -66,7 +66,7 @@ def main():
         state_num=2,
         measure_num=1,
         cov_process=0.1,
-        cov_measure=0.1) for _ in range(4)]
+        cov_measure=0.1) for _ in range(6)]
 
     # for mouth_dist
     mouth_dist_stabilizer = Stabilizer(
@@ -113,10 +113,11 @@ def main():
             x_left, y_left, x_ratio_left, y_ratio_left = FacialFeatures.detect_iris(img, faces[0], Eyes.LEFT)
             x_right, y_right, x_ratio_right, y_ratio_right = FacialFeatures.detect_iris(img, faces[0], Eyes.RIGHT)
 
-            pose_eye = [x_ratio_left, y_ratio_left, x_ratio_right, y_ratio_right]
 
             ear_left = FacialFeatures.eye_aspect_ratio(image_points, Eyes.LEFT)
             ear_right = FacialFeatures.eye_aspect_ratio(image_points, Eyes.RIGHT)
+
+            pose_eye = [ear_left, ear_right, x_ratio_left, y_ratio_left, x_ratio_right, y_ratio_right]
 
             mar = FacialFeatures.mouth_aspect_ratio(image_points)
             mouth_distance = FacialFeatures.mouth_distance(image_points)
@@ -166,10 +167,6 @@ def main():
 
             # send info to unity
             if args.connect:
-                # for sending to unity chan
-                # send_info_to_unity(socket,
-                #     (roll, pitch, yaw, ear_left, ear_right, mar)
-                # )
 
                 # for sending to live2d model (Hiyori)
                 send_info_to_unity(socket,
@@ -192,7 +189,8 @@ def main():
 
         # flip vertically at the end for creating mirror img
         # img = cv2.flip(img, 1)
-        cv2.imshow('Facial landmark', img_facemesh)
+        if args.debug:
+            cv2.imshow('Facial landmark', img_facemesh)
 
         # press "q" to leave
         if cv2.waitKey(1) & 0xFF == ord('q'):
@@ -204,8 +202,16 @@ def main():
 if __name__ == "__main__":
 
     parser = ArgumentParser()
+    parser.add_argument("--cam", type=int,
+                        help="specify the camera number if you have multiple cameras",
+                        default=0)
+
     parser.add_argument("--connect", action="store_true",
                         help="connect to unity character",
+                        default=False)
+
+    parser.add_argument("--debug", action="store_true",
+                        help="showing the camera's image for debugging",
                         default=False)
     args = parser.parse_args()
 
