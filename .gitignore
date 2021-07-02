@@ -6,3 +6,4 @@ build
 main_*
 dist
 main-*
+file_tidy.py
