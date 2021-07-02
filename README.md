@@ -1,8 +1,15 @@
 # VTuber Python Unity Tutorial
 
-An Implementation of VTuber (Both 3D and Live2D) using Python and Unity. Supporting **face movement tracking**, **eye blinking detection**, **iris detection and tracking **and **mouth movement tracking** entailing CPU only.
+An Implementation of VTuber (Both 3D and Live2D) using Python and Unity. Supporting **face movement tracking**, **eye blinking detection**, **iris detection and tracking** and **mouth movement tracking** using **CPU only**.
 
 ## Usage
+![Live2D Demo](https://github.com/mmmmmm44/VTuber-Python-Unity/blob/main/Images/live2d_demo.gif)
+
+*Live2D Demo*
+
+![UnityChan 3D Demo](https://github.com/mmmmmm44/VTuber-Python-Unity/blob/main/Images/unitychan3d_demo.gif)
+
+*UnityChan 3D Demo*
 
 ## File Explanation
 |File|Description|
@@ -24,7 +31,7 @@ Existing projects rely on Dlib, which although providing reliable and accurate f
 Clone this project into your directory
 ```
 git clone
-cd "VTuber Python Unity Tutorial"
+cd "VTuber-Python-Unity"
 ```
 ### For Live2D model
 1. Download the Cubism SDK For Unity from this [website](https://www.live2d.com/download/cubism-sdk/) and the sample model used (桃瀬ひより) from this [website](https://www.live2d.com/download/sample-data/)
