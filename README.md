@@ -1,49 +1,51 @@
 # VTuber Python Unity Tutorial
 
-An Implementation of VTuber (Both 3D and Live2D) using Python and Unity. Supporting **face movement tracking**, **eye blinking detection**, **iris detection and tracking **and **mouth movement tracking**.
+An Implementation of VTuber (Both 3D and Live2D) using Python and Unity. Supporting **face movement tracking**, **eye blinking detection**, **iris detection and tracking **and **mouth movement tracking** entailing CPU only.
 
 ## Usage
-(Include a Demo)
 
 ## File Explanation
 |File|Description|
- |:---:|:---:|:---:|
- |main.py|The main program|
- |facial_landmark.py|The module which is used to detect your face and generate the facial landmarks.|
- |pose_estimator.py|The module which estimates your pose/ orientation of your head based on the landmarks.|
- |stabilizer.py|Implementation of Kalman Filter to stabilize the values.|
- |facial_features.py|Various facial features detection implementation, including blinking, iris detection and mouth movement.|
- |UnityAssets|Scripts for both 3D (UnityChan) and Live2D (Hiyori) models|
+|:---:|:---:|
+|main.py|The main program|
+|facial_landmark.py|The module which is used to detect your face and generate the facial landmarks.|
+|pose_estimator.py|The module which estimates your pose/ orientation of your head based on the landmarks.|
+|stabilizer.py|Implementation of Kalman Filter to stabilize the values.|
+|facial_features.py|Various facial features detection implementation, including blinking, iris detection and mouth movement.|
+|model.txt|The points of the 3D Canonical model used in Mediapipe. [Source file](https://github.com/google/mediapipe/blob/master/mediapipe/modules/face_geometry/data/canonical_face_model.obj)|
+|UnityAssets|Whole Unity Porjects (in packages) and Scripts for both 3D (UnityChan) and Live2D (Hiyori) models|
 
 ## Background
 Using avatars for streaming, content creation and VR gaming has been gaining increasing popularity, especially the boom of Hololive and other related companies active apperances in social media platforms such as YouTube and Twitter. Curious about the technology behind, I create this project after multiple researches.
 
-Existing projects rely on Dlib, which although providing reliable and accurate facial landmark detection, requires decent graphic cards to run. However, implementing with the recent FaceMesh model in [Mediapipe](https://github.com/google/mediapipe), the detection can run smoothly using CPU only, making running on computers with mediocre graphic cards or laptops with integrated graphic cards possible.
+Existing projects rely on Dlib, which although providing reliable and accurate facial landmark detection, requires decent graphic cards to run. However, implemented with the recent FaceMesh model in [Mediapipe](https://github.com/google/mediapipe), accurate detection and tracking can be run smoothly using CPU only, making running on computers with mediocre graphic cards or laptops with integrated graphic cards possible.
 
 ## How To Use
 Clone this project into your directory
 ```
 git clone
-cd
+cd "VTuber Python Unity Tutorial"
 ```
 ### For Live2D model
 1. Download the Cubism SDK For Unity from this [website](https://www.live2d.com/download/cubism-sdk/) and the sample model used (桃瀬ひより) from this [website](https://www.live2d.com/download/sample-data/)
 
 2. Create an empty Unity 3D project, and import the Cubism SDK. Unzip the model and drag the whole folder to the Project window of the Unity Project.
 
-3. Drag the live2D model's prefab into the scene, and adjust the camera's position, background and projection properties. If there are some werid projection errors of the model, changing the projection of the camera from Perspective and Orthographic works for me.
+3. Drag the live2D model's prefab into the scene. Run the scene immediately to allow the model to be showed in Scene and Game window.
 
-4. Drag the HiyoriController.cs to the Hiyori GameObject. Adjust the Parameters in the inspector
+4. Adjust the camera's position, background and projection properties. If there are some werid projection problems of the model, changing the projection of the camera from Perspective and Orthographic works for me.
 
-5.  Run the Scene
+5. Drag the HiyoriController.cs to the Hiyori GameObject. Adjust the parameters in the inspector
 
-6. Run the following code in terminal
+6. Run the scene.
+
+7. Run the following code in terminal
 [content in the bracket is optional]
 ```
 python main.py --connect [--debug]
 ```
 
-7. Enjoy
+8. Enjoy
 
 ### For 3D Model (UnityChan)
 1. Download the UnityChan model from the [website](https://unity-chan.com/). Go to "Data Download", accept the terms and agreements, and select the first one. Unzip the file.
@@ -54,7 +56,7 @@ python main.py --connect [--debug]
 
 4. Adjust the camera's position, background and field of view.
 
-5. Drag the UnityChanControl.cs script onto the prefab. Adjust the variables in the inspector. You may disable the AutoBlink script attached to control the blinking by yourself.
+5. Drag the UnityChanControl.cs script onto the prefab. Adjust the variables in the inspector. Disable other attached scripts except AutoBlink and UnityChanControl. You may disable the AutoBlink script attached to control the blinking by yourself.
 
 6. Run the scene first
 
@@ -78,19 +80,30 @@ python main.py --connect [--debug]
 
 (Later version should be supported as well)
 
-(For Windows, it is recommended to run this project using Anaconda and create a virtual environment before installing such packages.)
+*(For Windows, it is recommended to run this project using Anaconda and create a virtual environment before installing such packages.)*
+
+*The whole project is run on a laptop with Intel Core i5-8250U, with 16GB RAM and integrated graphic card only.*
 
 
-## References
+## References/ Credits
+
+[Detect 468 Face Landmarks in Real-time | OpenCV Python | Computer Vision - Murtaza's Workshop - Robotics and AI](https://youtu.be/V9bzew8A1tc)
+
+[Eye motion tracking - Opencv with Python - Pysoruce](https://youtu.be/kbdbZFT9NQI)
+
  | Project | Author | LICENSE |
  |:---:|:---:|:---:|
  | [head-pose-estimation](https://github.com/yinguobing/head-pose-estimation) | [Yin Guobing](https://github.com/yinguobing) | [LICENSE](https://github.com/yinguobing/head-pose-estimation/blob/master/LICENSE) |
  | [VTuber_Unity](https://github.com/kwea123/VTuber_Unity) | [AI葵](https://github.com/kwea123) | [LICENSE](https://github.com/kwea123/VTuber_Unity/blob/master/LICENSE) |
  |[VTuber-MomoseHiyori](https://github.com/KennardWang/VTuber-MomoseHiyori) |[KennardWang](https://github.com/KennardWang)|[LICENSE](https://github.com/KennardWang/VTuber-MomoseHiyori/blob/master/LICENSE)|
 
- [Eye motion tracking - Opencv with Python - Pysoruce](https://youtu.be/kbdbZFT9NQI)
-
-[Detect 468 Face Landmarks in Real-time | OpenCV Python | Computer Vision - Murtaza's Workshop - Robotics and AI](https://youtu.be/V9bzew8A1tc)
+Hiyori Momose's model
+|Position|Creator|
+|:---:|:---:|
+|Illustration|Kani Biimu [Twitter [@kani_biimu](https://twitter.com/kani_biimu)]|
+|Modeling|Live2D Inc.|
 
 ## License
 MIT
+
+The Unity Chan model in the Unity Packages provided is distributed under Unity-Chan License © Unity Technologies Japan/UCL. A seperate sets of that License is included in UnityAssets/Licenses/UCL2_0
