@@ -20,7 +20,7 @@ An Implementation of VTuber (Both 3D and Live2D) using Python and Unity. Support
 |stabilizer.py|Implementation of Kalman Filter to stabilize the values.|
 |facial_features.py|Various facial features detection implementation, including blinking, iris detection and mouth movement.|
 |model.txt|The points of the 3D Canonical model used in Mediapipe. [Source file](https://github.com/google/mediapipe/blob/master/mediapipe/modules/face_geometry/data/canonical_face_model.obj)|
-|UnityAssets|Whole Unity Porjects (in packages) and Scripts for both 3D (UnityChan) and Live2D (Hiyori) models|
+|UnityAssets|Whole Unity Projects (in packages) and Scripts for both 3D (UnityChan) and Live2D (Hiyori) models|
 
 ## Background
 Using avatars for streaming, content creation and VR gaming has been gaining increasing popularity, especially the boom of Hololive and other related companies active apperances in social media platforms such as YouTube and Twitter. Curious about the technology behind, I create this project after multiple researches.
@@ -33,7 +33,26 @@ Clone this project into your directory
 git clone
 cd "VTuber-Python-Unity"
 ```
-### For Live2D model
+
+### Simple Setup
+1. Create An empty Unity 3D Project
+
+2. Import either the Live2D or UnityChan3D package to your project. The corresponding SDKs have been included already.
+
+3. Run the Scene.
+
+4. Run the following code in terminal
+[content in the bracket is optional]
+```
+python main.py --connect [--debug]
+```
+
+5. Enjoy
+
+
+### Custom Setup (For people who want to import their own 3D/ Live2D model)
+
+#### For Live2D model
 1. Download the Cubism SDK For Unity from this [website](https://www.live2d.com/download/cubism-sdk/) and the sample model used (桃瀬ひより) from this [website](https://www.live2d.com/download/sample-data/)
 
 2. Create an empty Unity 3D project, and import the Cubism SDK. Unzip the model and drag the whole folder to the Project window of the Unity Project.
@@ -54,7 +73,7 @@ python main.py --connect [--debug]
 
 8. Enjoy
 
-### For 3D Model (UnityChan)
+#### For 3D Model (UnityChan)
 1. Download the UnityChan model from the [website](https://unity-chan.com/). Go to "Data Download", accept the terms and agreements, and select the first one. Unzip the file.
 
 2. Create an empty Unity 3D Project. Drag the unzipped folder to the Project Window of the project.
@@ -76,6 +95,8 @@ python main.py --connect [--debug]
 8. Enjoy
 
 **Make sure you run the Unity Scene first before running the python script**
+
+*Both the python scripts and the unity project can be exported to .exe, which can be run on other computers.*
 
 ## Development Environment
 * Python 3.8.5
