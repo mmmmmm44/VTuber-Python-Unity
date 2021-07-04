@@ -38,7 +38,10 @@ Using avatars for streaming, content creation and VR gaming has been gaining inc
 Existing projects rely on Dlib, which although providing reliable and accurate facial landmark detection, requires decent graphic cards to run. However, implemented with the recent FaceMesh model in [Mediapipe](https://github.com/google/mediapipe), accurate detection and tracking can be run smoothly using CPU only, making running on computers with mediocre graphic cards or laptops with integrated graphic cards possible.
 
 ## How To Use
+_As the "*.unitypackage" files are uploaded through github's LFS (Large File Storage) system, you may have to install the corresponding package to clone the project successfully. Click the [link](https://git-lfs.github.com/) for more information._
+
 Clone this project into your directory
+
 ```
 git clone
 cd "VTuber-Python-Unity"
