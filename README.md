@@ -11,6 +11,14 @@ An Implementation of VTuber (Both 3D and Live2D) using Python and Unity. Support
 
 *UnityChan 3D Demo*
 
+## Features
+* Facial landmarks detection and movement tracking supported by Facemesh by [Mediapipe](https://github.com/google/mediapipe).
+* Various facial expressions detection including eye blinking, iris and mouth movements.
+* Running **smooth 30 FPS** with **CPU only** for the aformentioned features.
+* Simple and clean UI for adjusting the sensibility of detection in Unity.
+* Saveload mechanism to save and load your preferences in Unity.
+* Including sample (Unity) projects for both 3D and Live2D models
+
 ## File Explanation
 |File|Description|
 |:---:|:---:|

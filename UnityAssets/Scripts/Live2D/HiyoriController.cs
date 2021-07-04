@@ -253,7 +253,8 @@ public class HiyoriController : MonoBehaviour, ISaveable
         // close the thread when the application quits
         receiveThread.Abort();
     }
-    // To be implemented
+
+    // Save Load Interface Implementation
     // Ref: https://youtu.be/uD7y4T4PVk0
     public void PopulateSaveData(HiyoriPref hiyoriPref)
     {

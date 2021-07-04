@@ -175,7 +175,6 @@ def main():
                     mar, mouth_distance)
                 )
 
-
             # pose_estimator.draw_annotation_box(img, pose[0], pose[1], color=(255, 128, 128))
 
             # pose_estimator.draw_axis(img, pose[0], pose[1])
@@ -187,8 +186,6 @@ def main():
             pose_estimator = PoseEstimator((img_facemesh.shape[0], img_facemesh.shape[1]))
 
 
-        # flip vertically at the end for creating mirror img
-        # img = cv2.flip(img, 1)
         if args.debug:
             cv2.imshow('Facial landmark', img_facemesh)
 

@@ -32,7 +32,7 @@ public class UISystem : MonoBehaviour
     {
         ui_popped_up = false;
 
-        ShowUI(false);
+        ShowUI(ui_popped_up);
     }
 
     // Update is called once per frame

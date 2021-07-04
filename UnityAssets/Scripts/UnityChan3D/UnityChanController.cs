@@ -9,7 +9,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 
-public class UnityChanController : MonoBehaviour
+public class UnityChanController : MonoBehaviour, ISaveable
 {
     private Animator anim;
 
@@ -22,7 +22,9 @@ public class UnityChanController : MonoBehaviour
     public float ear_max_threshold = 0.38f;
     public float ear_min_threshold = 0.30f;
 
-    private bool isAutoBlinkActive;
+    public bool isAutoBlinkActive;
+    private MonoBehaviour autoBlinkScript;
+
     [HideInInspector]
     public float eye_ratio_close = 85.0f;
     [HideInInspector]
@@ -35,10 +37,6 @@ public class UnityChanController : MonoBehaviour
 
     public float mar_max_threshold = 1.0f;
     public float mar_min_threshold = 0.0f;
-
-    [HideInInspector]
-    public float mouth_ratio_close = 0.0f;
-    public float mouth_ratio_open = 100.0f;
 
     private Transform neck;
     private Quaternion neck_quat;
@@ -61,9 +59,12 @@ public class UnityChanController : MonoBehaviour
 
         neck = anim.GetBoneTransform(HumanBodyBones.Neck);
         neck_quat = Quaternion.Euler(0, 90, -90);
-        MonoBehaviour autoBlinkScript = GetComponent("AutoBlink") as MonoBehaviour;
-        isAutoBlinkActive = autoBlinkScript.enabled;
+        autoBlinkScript = GetComponent("AutoBlink") as MonoBehaviour;
+        autoBlinkScript.enabled = isAutoBlinkActive;
         SetEyes(eye_ratio_open);
+
+        GameObject.FindWithTag("GameController").GetComponent<UISystem>().LoadData();
+        GameObject.FindWithTag("GameController").GetComponent<UISystem>().InitUI();
 
         InitTCP();
     }
@@ -152,6 +153,12 @@ public class UnityChanController : MonoBehaviour
         ref_SMR_EL_DEF.SetBlendShapeWeight (6, ratio);
     }
 
+    public void EnableAutoBlink(bool enabled)
+    {
+        autoBlinkScript.enabled = enabled;
+        isAutoBlinkActive = enabled;
+    }
+
     // for mouth movement
     void MouthMoving() {
         float mar_clamped = Mathf.Clamp(mar, mar_min_threshold, mar_max_threshold);
@@ -170,5 +177,27 @@ public class UnityChanController : MonoBehaviour
     {
         // close the thread when the application quits
         receiveThread.Abort();
+    }
+
+    // Save Load Interface Implementation
+    // Ref: https://youtu.be/uD7y4T4PVk0
+    public void PopulateSaveData(UnityChanPref unityChanPref)
+    {
+        unityChanPref.max_rotation_angle = max_rotation_angle;
+        unityChanPref.ear_max_threshold = ear_max_threshold;
+        unityChanPref.ear_min_threshold = ear_min_threshold;
+        unityChanPref.isAutoBlinkActive = isAutoBlinkActive;
+        unityChanPref.mar_max_threshold = mar_max_threshold;
+        unityChanPref.mar_min_threshold = mar_min_threshold;
+    }
+
+    public void LoadFromSaveData(UnityChanPref unityChanPref)
+    {
+        max_rotation_angle = unityChanPref.max_rotation_angle;
+        ear_max_threshold = unityChanPref.ear_max_threshold;
+        ear_min_threshold = unityChanPref.ear_min_threshold;
+        isAutoBlinkActive = unityChanPref.isAutoBlinkActive;
+        mar_max_threshold = unityChanPref.mar_max_threshold;
+        mar_min_threshold = unityChanPref.mar_min_threshold;
     }
 }

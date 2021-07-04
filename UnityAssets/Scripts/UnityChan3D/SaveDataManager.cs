@@ -6,13 +6,13 @@ public static class SaveDataManager
 {
     public static bool SaveJsonData(IEnumerable<ISaveable> a_Saveables)
     {
-        HiyoriPref hiyoriPref = new HiyoriPref();
+        UnityChanPref unityChanPref = new UnityChanPref();
         foreach (var saveable in a_Saveables)
         {
-            saveable.PopulateSaveData(hiyoriPref);
+            saveable.PopulateSaveData(unityChanPref);
         }
 
-        bool isSuccess = FileManager.WriteToFile("HiyoriPrefData01.dat", hiyoriPref.ToJson());
+        bool isSuccess = FileManager.WriteToFile("UnityChanPrefData01.dat", unityChanPref.ToJson());
 
         if (isSuccess)
         {
@@ -25,16 +25,16 @@ public static class SaveDataManager
     public static bool LoadJsonData(IEnumerable<ISaveable> a_Saveables)
     {
 
-        bool isSuccess = FileManager.LoadFromFile("HiyoriPrefData01.dat", out var json);
+        bool isSuccess = FileManager.LoadFromFile("UnityChanPrefData01.dat", out var json);
 
         if (isSuccess)
         {
-            HiyoriPref hiyoriPref = new HiyoriPref();
-            hiyoriPref.LoadFromJson(json);
+            UnityChanPref unityChanPref = new UnityChanPref();
+            unityChanPref.LoadFromJson(json);
 
             foreach (var saveable in a_Saveables)
             {
-                saveable.LoadFromSaveData(hiyoriPref);
+                saveable.LoadFromSaveData(unityChanPref);
             }
 
             Debug.Log("Load complete");
