@@ -19,6 +19,8 @@ An Implementation of VTuber (Both 3D and Live2D) using Python and Unity. Support
 * Saveload mechanism to save and load your preferences in Unity.
 * Including sample (Unity) projects for both 3D and Live2D models
 
+*Due to Github file size limitation, most of the folders in the unity chan sample project are removed, yet the project can still run*
+
 ## File Explanation
 |File|Description|
 |:---:|:---:|
