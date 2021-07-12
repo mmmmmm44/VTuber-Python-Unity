@@ -70,7 +70,7 @@ python main.py --connect [--debug]
 
 2. Create an empty Unity 3D project, and import the Cubism SDK. Unzip the model and drag the whole folder to the Project window of the Unity Project.
 
-3. Drag the live2D model's prefab into the scene. Run the scene immediately to allow the model to be showed in Scene and Game window.
+3. Drag the live2D model's prefab into the scene. Run the scene immediately to allow the model to be shown in Scene and Game window.
 
 4. Adjust the camera's position, background and projection properties. If there are some werid projection problems of the model, changing the projection of the camera from Perspective and Orthographic works for me.
 
@@ -95,7 +95,7 @@ python main.py --connect [--debug]
 
 4. Adjust the camera's position, background and field of view.
 
-5. Drag the UnityChanControl.cs script onto the prefab. Adjust the variables in the inspector. Disable other attached scripts except AutoBlink and UnityChanControl. You may disable the AutoBlink script attached to control the blinking by yourself.
+5. Drag the UnityChanControl.cs script onto the prefab. __Change the update mode of the Animator attached to "Animate Physics" and the Controller to UnityChanLocomotions. (Crucial)__ Adjust the variables in the inspector. Disable other attached scripts except AutoBlink and UnityChanController. You may tick the box "is Auto Blink Active" in UnityChanContoller to enable auto blinking (enable AutoBlink script when ticked).
 
 6. Run the scene first
 
