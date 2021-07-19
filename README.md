@@ -18,6 +18,7 @@ An Implementation of VTuber (Both 3D and Live2D) using Python and Unity. Support
 * Simple and clean UI for adjusting the sensibility of detection in Unity.
 * Saveload mechanism to save and load your preferences in Unity.
 * Including sample (Unity) projects for both 3D and Live2D models
+* Detailed and thorough explanation videos (with EN and ZH subtitles) [playlist](https://www.youtube.com/playlist?list=PL624GOtU88c4J9rGy7ZWjeSkOvCvuavan)
 
 *Due to Github file size limitation, most of the folders in the unity chan sample project are removed, yet the project can still run*
 
@@ -43,7 +44,7 @@ _As the "*.unitypackage" files are uploaded through github's LFS (Large File Sto
 Clone this project into your directory
 
 ```
-git clone
+git clone https://github.com/mmmmmm44/VTuber-Python-Unity.git
 cd "VTuber-Python-Unity"
 ```
 
@@ -66,6 +67,9 @@ python main.py --connect [--debug]
 ### Custom Setup (For people who want to import their own 3D/ Live2D model)
 
 #### For Live2D model
+
+Video Walkthrough: [Click Me!](https://youtu.be/3pBc9Wkzzos?t=30)
+
 1. Download the Cubism SDK For Unity from this [website](https://www.live2d.com/download/cubism-sdk/) and the sample model used (桃瀬ひより) from this [website](https://www.live2d.com/download/sample-data/)
 
 2. Create an empty Unity 3D project, and import the Cubism SDK. Unzip the model and drag the whole folder to the Project window of the Unity Project.
@@ -87,6 +91,9 @@ python main.py --connect [--debug]
 8. Enjoy
 
 #### For 3D Model (UnityChan)
+
+Video Walkthrough: [Click Me!](https://youtu.be/V6Wd2kPNbPY?t=180)
+
 1. Download the UnityChan model from the [website](https://unity-chan.com/). Go to "Data Download", accept the terms and agreements, and select the first one. Unzip the file.
 
 2. Create an empty Unity 3D Project. Drag the unzipped folder to the Project Window of the project.
