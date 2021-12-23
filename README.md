@@ -53,6 +53,10 @@ cd "VTuber-Python-Unity"
 
 2. Import either the Live2D or UnityChan3D package to your project. The corresponding SDKs have been included already.
 
+Links for both packages (in a zip file): [Dropbox](https://www.dropbox.com/sh/qh7dcqt0z287idt/AACbljJEcD6knM6JL2uojfIaa?dl=0)
+
+_last edit: 23-12-2021_
+
 3. Run the Scene.
 
 4. Run the following code in terminal
@@ -122,7 +126,7 @@ python main.py --connect [--debug]
 * Python 3.8.5
 * Numpy 1.19.2
 * OpenCV 4.5.1
-* Mediapipe 0.8.5
+* Mediapipe 0.8.9.1
 
 * Unity 2020.3.12f1
 
@@ -131,6 +135,8 @@ python main.py --connect [--debug]
 *(For Windows, it is recommended to run this project using Anaconda and create a virtual environment before installing such packages.)*
 
 *The whole project is run on a laptop with Intel Core i5-8250U, with 16GB RAM and integrated graphic card only.*
+
+*The same project is tested on a M1 Max device, running in rosetta.*
 
 
 ## References/ Credits

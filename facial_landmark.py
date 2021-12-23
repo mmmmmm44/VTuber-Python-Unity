@@ -24,6 +24,7 @@ class FaceMeshDetector:
         self.face_mesh = self.mp_face_mesh.FaceMesh(
             self.static_image_mode,
             self.max_num_faces,
+            False,
             self.min_detection_confidence,
             self.min_tracking_confidence
         )
@@ -54,7 +55,7 @@ class FaceMeshDetector:
                     self.mp_drawing.draw_landmarks(
                         image = img,
                         landmark_list = face_landmarks,
-                        connections = self.mp_face_mesh.FACE_CONNECTIONS,
+                        connections = self.mp_face_mesh.FACEMESH_TESSELATION,
                         landmark_drawing_spec = self.drawing_spec,
                         connection_drawing_spec = self.drawing_spec)
 

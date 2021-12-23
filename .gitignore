@@ -8,3 +8,7 @@ dist
 main-*
 file_tidy.py
 Videos*
+
+UnityAssets/Packages
+.DS_Store
+UnityAssets/.DS_Store
