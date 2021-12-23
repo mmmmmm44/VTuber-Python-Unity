@@ -33,20 +33,24 @@ An Implementation of VTuber (Both 3D and Live2D) using Python and Unity. Support
 |model.txt|The points of the 3D Canonical model used in Mediapipe. [Source file](https://github.com/google/mediapipe/blob/master/mediapipe/modules/face_geometry/data/canonical_face_model.obj)|
 |UnityAssets|Whole Unity Projects (in packages) and Scripts for both 3D (UnityChan) and Live2D (Hiyori) models|
 
+
+
 ## Background
 Using avatars for streaming, content creation and VR gaming has been gaining increasing popularity, especially the boom of Hololive and other related companies active apperances in social media platforms such as YouTube and Twitter. Curious about the technology behind, I create this project after multiple researches.
 
 Existing projects rely on Dlib, which although providing reliable and accurate facial landmark detection, requires decent graphic cards to run. However, implemented with the recent FaceMesh model in [Mediapipe](https://github.com/google/mediapipe), accurate detection and tracking can be run smoothly using CPU only, making running on computers with mediocre graphic cards or laptops with integrated graphic cards possible.
 
 ## How To Use
-_As the "*.unitypackage" files are uploaded through github's LFS (Large File Storage) system, you may have to install the corresponding package to clone the project successfully. Click the [link](https://git-lfs.github.com/) for more information._
-
 Clone this project into your directory
 
 ```
 git clone https://github.com/mmmmmm44/VTuber-Python-Unity.git
 cd "VTuber-Python-Unity"
 ```
+
+Download the unity packages of sample projects of both live2D and unitychan 3D in the link next to: [Dropbox](https://www.dropbox.com/sh/qh7dcqt0z287idt/AACbljJEcD6knM6JL2uojfIaa?dl=0) 
+
+(last edit of the sample projects: 23-12-2021)
 
 ### Simple Setup
 1. Create An empty Unity 3D Project
