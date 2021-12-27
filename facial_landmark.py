@@ -24,7 +24,7 @@ class FaceMeshDetector:
         self.face_mesh = self.mp_face_mesh.FaceMesh(
             self.static_image_mode,
             self.max_num_faces,
-            False,
+            True,
             self.min_detection_confidence,
             self.min_tracking_confidence
         )
@@ -65,7 +65,7 @@ class FaceMeshDetector:
                     face.append([x, y])
 
                     # show the id of each point on the image
-                    # cv2.putText(img, str(id), (x-4, y-4), cv2.FONT_HERSHEY_SIMPLEX, 0.3, (255, 0, 0), 1, cv2.LINE_AA)
+                    # cv2.putText(img, str(id), (x-4, y-4), cv2.FONT_HERSHEY_SIMPLEX, 0.3, (255, 255, 255), 1, cv2.LINE_AA)
 
                 self.faces.append(face)
 

@@ -37,8 +37,11 @@ def init_TCP():
 
 def send_info_to_unity(s, args):
     msg = '%.4f ' * len(args) % args
-    print(msg)
     s.send(bytes(msg, "utf-8"))
+
+def print_debug_msg(args):
+    msg = '%.4f ' * len(args) % args
+    print(msg)
 
 def main():
 
@@ -53,6 +56,9 @@ def main():
     # Pose estimation related
     pose_estimator = PoseEstimator((img.shape[0], img.shape[1]))
     image_points = np.zeros((pose_estimator.model_points_full.shape[0], 2))
+
+    # extra 10 points due to new attention model (in iris detection)
+    iris_image_points = np.zeros((10, 2))
 
     # Introduce scalar stabilizers for pose.
     pose_stabilizers = [Stabilizer(
@@ -105,13 +111,17 @@ def main():
             for i in range(len(image_points)):
                 image_points[i, 0] = faces[0][i][0]
                 image_points[i, 1] = faces[0][i][1]
+                
+            for j in range(len(iris_image_points)):
+                iris_image_points[j, 0] = faces[0][j + 468][0]
+                iris_image_points[j, 1] = faces[0][j + 468][1]
 
             # The third step: pose estimation
             # pose: [[rvec], [tvec]]
             pose = pose_estimator.solve_pose_by_all_points(image_points)
 
-            x_left, y_left, x_ratio_left, y_ratio_left = FacialFeatures.detect_iris(img, faces[0], Eyes.LEFT)
-            x_right, y_right, x_ratio_right, y_ratio_right = FacialFeatures.detect_iris(img, faces[0], Eyes.RIGHT)
+            x_ratio_left, y_ratio_left = FacialFeatures.detect_iris(image_points, iris_image_points, Eyes.LEFT)
+            x_ratio_right, y_ratio_right = FacialFeatures.detect_iris(image_points, iris_image_points, Eyes.RIGHT)
 
 
             ear_left = FacialFeatures.eye_aspect_ratio(image_points, Eyes.LEFT)
@@ -122,8 +132,8 @@ def main():
             mar = FacialFeatures.mouth_aspect_ratio(image_points)
             mouth_distance = FacialFeatures.mouth_distance(image_points)
 
-            # print("left eye: %d, %d, %.2f, %.2f" % (x_left, y_left, x_ratio_left, y_ratio_left))
-            # print("right eye: %d, %d, %.2f, %.2f" % (x_right, y_right, x_ratio_right, y_ratio_right))
+            # print("left eye: %.2f, %.2f" % (x_ratio_left, y_ratio_left))
+            # print("right eye: %.2f, %.2f" % (x_ratio_right, y_ratio_right))
 
             # print("rvec (y) = (%f): " % (pose[0][1]))
             # print("rvec (x, y, z) = (%f, %f, %f): " % (pose[0][0], pose[0][1], pose[0][2]))
@@ -148,7 +158,7 @@ def main():
             mouth_dist_stabilizer.update([mouth_distance])
             steady_mouth_dist = mouth_dist_stabilizer.state[0]
 
-            # print("rvec (x, y, z) = (%f, %f, %f): " % (steady_pose[0][0], steady_pose[0][1], steady_pose[0][2]))
+            # print("rvec steady (x, y, z) = (%f, %f, %f): " % (steady_pose[0][0], steady_pose[0][1], steady_pose[0][2]))
             # print("tvec steady (x, y, z) = (%f, %f, %f): " % (steady_pose[1][0], steady_pose[1][1], steady_pose[1][2]))
 
             # calculate the roll/ pitch/ yaw
@@ -175,6 +185,12 @@ def main():
                     mar, mouth_distance)
                 )
 
+            if args.debug:
+                print_debug_msg((roll, pitch, yaw,
+                        ear_left, ear_right, x_ratio_left, y_ratio_left, x_ratio_right, y_ratio_right,
+                        mar, mouth_distance))
+
+
             # pose_estimator.draw_annotation_box(img, pose[0], pose[1], color=(255, 128, 128))
 
             # pose_estimator.draw_axis(img, pose[0], pose[1])
@@ -185,10 +201,9 @@ def main():
             # reset our pose estimator
             pose_estimator = PoseEstimator((img_facemesh.shape[0], img_facemesh.shape[1]))
 
-
         if args.debug:
             cv2.imshow('Facial landmark', img_facemesh)
-
+   
         # press "q" to leave
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break

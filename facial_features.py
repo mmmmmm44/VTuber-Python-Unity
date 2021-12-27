@@ -91,8 +91,9 @@ class FacialFeatures:
                 np.sum([image_points[eye_key_left[5]], image_points[eye_key_left[6]]], axis=0),
                 2)
             p1 = image_points[eye_key_left[0]]
-            p4 = image_points[eye_key_left[7]]
+            p4 = image_points[eye_key_left[8]]
 
+            # tip_of_eyebrow = image_points[63]
             tip_of_eyebrow = image_points[105]
 
         elif side == Eyes.RIGHT:
@@ -110,7 +111,7 @@ class FacialFeatures:
             p6 = np.true_divide(
                 np.sum([image_points[eye_key_right[5]], image_points[eye_key_right[6]]], axis=0),
                 2)
-            p1 = image_points[eye_key_right[7]]
+            p1 = image_points[eye_key_right[8]]
             p4 = image_points[eye_key_right[0]]
 
             tip_of_eyebrow = image_points[334]
@@ -145,94 +146,57 @@ class FacialFeatures:
         return np.linalg.norm(p1-p5)
 
 
-    def detect_iris(img, marks, side):
-        """
-        return:
-           x: the x coordinate of the iris in the input image.
-           y: the y coordinate of the iris in the input image.
-           x_rate: how much the iris is toward the left. 0 means totally left and 1 is totally right.
-           y_rate: how much the iris is toward the top. 0 means totally top and 1 is totally bottom.
-        """
+    # detect iris through new landmark coordinates produced by mediapipe
+    # replacing the old image processing method
+    def detect_iris(image_points, iris_image_points, side):
+        '''
+            return:
+                x_rate: how much the iris is toward the left. 0 means totally left and 1 is totally right.
+                y_rate: how much the iris is toward the top. 0 means totally top and 1 is totally bottom.
+        '''
 
-        # change the value here to suit your camera/ eye
-        left_eye_threshold = 34
-        right_eye_threshold = 45
+        iris_img_point = -1
+        p1, p4 = 0, 0
+        eye_y_high, eye_y_low = 0, 0
+        x_rate, y_rate = 0.5, 0.5
 
-        mask = np.full(img.shape[:2], 255, np.uint8)
-
-        region = None
-
+        # get the corresponding image coordinates of the landmarks
         if side == Eyes.LEFT:
-            region = np.zeros((len(FacialFeatures.eye_key_indicies[0]), 2), np.int32)
+            iris_img_point = 468
 
-            # get the pixel of the eyes region
-            for i in range(region.shape[0]):
-                region[i, 0] = marks[FacialFeatures.eye_key_indicies[0][i]][0]
-                region[i, 1] = marks[FacialFeatures.eye_key_indicies[0][i]][1]
+            eye_key_left = FacialFeatures.eye_key_indicies[0]
+            p1 = image_points[eye_key_left[0]]
+            p4 = image_points[eye_key_left[8]]
+
+            eye_y_high = image_points[eye_key_left[12]]
+            eye_y_low = image_points[eye_key_left[4]]
 
         elif side == Eyes.RIGHT:
-            region = np.zeros((len(FacialFeatures.eye_key_indicies[1]), 2), np.int32)
+            iris_img_point = 473
 
-            for i in range(region.shape[0]):
-                region[i, 0] = marks[FacialFeatures.eye_key_indicies[1][i]][0]
-                region[i, 1] = marks[FacialFeatures.eye_key_indicies[1][i]][1]
+            eye_key_right = FacialFeatures.eye_key_indicies[1]
+            p1 = image_points[eye_key_right[8]]
+            p4 = image_points[eye_key_right[0]]
 
-        try:
-            cv2.fillPoly(mask, [region], (0, 0, 0))
-            eye = cv2.bitwise_not(img, img.copy(), mask=mask)
+            eye_y_high = image_points[eye_key_right[12]]
+            eye_y_low = image_points[eye_key_right[4]]
 
-            # Cropping on the eye
-            margin = 4
-            min_x = np.min(region[:, 0]) - margin
-            max_x = np.max(region[:, 0]) + margin
-            min_y = np.min(region[:, 1]) - margin
-            max_y = np.max(region[:, 1]) + margin
+        p_iris = iris_image_points[iris_img_point - 468]
 
-            eye = eye[min_y:max_y, min_x:max_x]
+        # find the projection of iris_image_point on the straight line fromed by p1 and p4
+        # through vector dot product
+        # to get x_rate
 
-            # filtering
-            eye_gray = cv2.cvtColor(eye, cv2.COLOR_BGR2GRAY)
+        vec_p1_iris = [p_iris[0] - p1[0], p_iris[1] - p1[1]]
+        vec_p1_p4 = [p4[0] - p1[0], p4[1] - p1[1]]
+        
+        x_rate = (np.dot(vec_p1_iris, vec_p1_p4) / (np.linalg.norm(p1-p4) + 1e-06)) / (np.linalg.norm(p1-p4) + 1e-06)
 
-            eye_gray = cv2.GaussianBlur(eye_gray, (5, 5), 0)
-            # cv2.imshow("left eye gray" if side == Eyes.LEFT else "right eye gray",
-            #     FacialFeatures.resize_img(eye_gray, 300))
+        # find y-rate simiilarily
 
-            # follow tutorial for eye-motion tracking
-            # https://youtu.be/kbdbZFT9NQI
+        vec_eye_h_iris = [p_iris[0] - eye_y_high[0], p_iris[1] - eye_y_high[1]]
+        vec_eye_h_eye_l = [eye_y_low[0] - eye_y_high[0], eye_y_low[1] - eye_y_high[1]]
 
-            # threshold the image to show the pupil roi
-            _, threshold = cv2.threshold(eye_gray,
-                left_eye_threshold if side == Eyes.LEFT else right_eye_threshold,
-                255, cv2.THRESH_BINARY_INV)
+        y_rate = (np.dot(vec_eye_h_eye_l, vec_eye_h_iris) / (np.linalg.norm(eye_y_high - eye_y_low) + 1e-06)) / (np.linalg.norm(eye_y_high - eye_y_low) + 1e-06)
 
-            # cv2.imshow("left eye threshold" if side == Eyes.LEFT else "right eye threshold", threshold)
-
-            # search for contours and get the largest one
-            contours, _ = cv2.findContours(threshold, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-            contours = sorted(contours, key = lambda x: cv2.contourArea(x), reverse = True)
-            cnt = contours[0]
-            cv2.drawContours(eye, [cnt], 0, (0, 255, 0), 1)
-
-            # get the contour box, and get its x and y position
-            (x, y, w, h) = cv2.boundingRect(cnt)
-            x_center, y_center = x + int(w / 2), y + int(h / 2)
-
-            # drawing
-            # cv2.rectangle(eye, (x, y), (x+w, y+h), (255, 0, 0), 1)
-            # cv2.line(eye, (x_center, 0), (x_center, eye.shape[0]), (0, 255, 0), 1)
-            # cv2.line(eye, (0, y_center), (eye.shape[1], y_center), (0, 255, 0), 1)
-
-            # print("%d, %d, %d, %d" % (min_x + margin, max_x - margin, min_y + margin, max_y - margin))
-            # print("right eye: %d, %d, %.2f, %.2f" % (x_right, y_right, x_ratio_right, y_ratio_right))
-
-            # calculate the ratio
-            x_ratio = np.clip(x_center / (max_x - min_x - margin * 2), 0, 1)
-            y_ratio = np.clip(y_center / (max_y - min_y - margin * 2), 0, 1)
-
-            # cv2.imshow("left eye" if side == Eyes.LEFT else "right eye",
-            #     FacialFeatures.resize_img(eye, 300))
-
-            return x_center + (min_x - margin), y_center + (min_y - margin), x_ratio, y_ratio
-
-        except:
-            return 0, 0, 0.5, 0.5
+        return x_rate, y_rate
