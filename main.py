@@ -1,5 +1,5 @@
 """
-Main program to run the detection
+Main program to run the detection and TCP
 """
 
 from argparse import ArgumentParser
@@ -9,8 +9,6 @@ import numpy as np
 
 # for TCP connection with unity
 import socket
-from collections import deque
-from platform import system
 
 # face detection and facial landmark
 from facial_landmark import FaceMeshDetector
@@ -22,14 +20,30 @@ from stabilizer import Stabilizer
 # Miscellaneous detections (eyes/ mouth...)
 from facial_features import FacialFeatures, Eyes
 
+import sys
+
 # global variable
 port = 5066         # have to be same as unity
 
 # init TCP connection with unity
 # return the socket connected
 def init_TCP():
+    port = args.port
     address = ('127.0.0.1', port)
     # address = ('192.168.0.107', port)
+
+    try:
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s.connect(address)
+        # print(socket.gethostbyname(socket.gethostname()) + "::" + str(port))
+        print("Connected to address:", socket.gethostbyname(socket.gethostname()) + ":" + str(port))
+        return s
+    except OSError as e:
+        print("Error while connecting :: %s" % e)
+        
+        # quit the script if connection fails (e.g. Unity server side quits suddenly)
+        sys.exit()
+
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     # print(socket.gethostbyname(socket.gethostname()))
     s.connect(address)
@@ -37,7 +51,14 @@ def init_TCP():
 
 def send_info_to_unity(s, args):
     msg = '%.4f ' * len(args) % args
-    s.send(bytes(msg, "utf-8"))
+
+    try:
+        s.send(bytes(msg, "utf-8"))
+    except socket.error as e:
+        print("error while sending :: " + str(e))
+
+        # quit the script if connection fails (e.g. Unity server side quits suddenly)
+        sys.exit()
 
 def print_debug_msg(args):
     msg = '%.4f ' * len(args) % args
@@ -45,7 +66,13 @@ def print_debug_msg(args):
 
 def main():
 
+    # use internal webcam/ USB camera
     cap = cv2.VideoCapture(args.cam)
+
+    # IP cam (android only)
+    # url = 'http://192.168.0.102:4747/video'
+    # url = 'https://192.168.0.102:8080/video'
+    # cap = cv2.VideoCapture(url)
 
     # Facemesh
     detector = FaceMeshDetector()
@@ -112,6 +139,7 @@ def main():
                 image_points[i, 0] = faces[0][i][0]
                 image_points[i, 1] = faces[0][i][1]
                 
+            # for refined landmarks around iris
             for j in range(len(iris_image_points)):
                 iris_image_points[j, 0] = faces[0][j + 468][0]
                 iris_image_points[j, 1] = faces[0][j + 468][1]
@@ -158,6 +186,7 @@ def main():
             mouth_dist_stabilizer.update([mouth_distance])
             steady_mouth_dist = mouth_dist_stabilizer.state[0]
 
+            # uncomment the rvec line to check the raw values
             # print("rvec steady (x, y, z) = (%f, %f, %f): " % (steady_pose[0][0], steady_pose[0][1], steady_pose[0][2]))
             # print("tvec steady (x, y, z) = (%f, %f, %f): " % (steady_pose[1][0], steady_pose[1][1], steady_pose[1][2]))
 
@@ -185,6 +214,7 @@ def main():
                     mar, mouth_distance)
                 )
 
+            # print the sent values in the terminal
             if args.debug:
                 print_debug_msg((roll, pitch, yaw,
                         ear_left, ear_right, x_ratio_left, y_ratio_left, x_ratio_right, y_ratio_right,
@@ -201,8 +231,7 @@ def main():
             # reset our pose estimator
             pose_estimator = PoseEstimator((img_facemesh.shape[0], img_facemesh.shape[1]))
 
-        if args.debug:
-            cv2.imshow('Facial landmark', img_facemesh)
+        cv2.imshow('Facial landmark', img_facemesh)
    
         # press "q" to leave
         if cv2.waitKey(1) & 0xFF == ord('q'):
@@ -214,17 +243,23 @@ def main():
 if __name__ == "__main__":
 
     parser = ArgumentParser()
-    parser.add_argument("--cam", type=int,
-                        help="specify the camera number if you have multiple cameras",
-                        default=0)
 
     parser.add_argument("--connect", action="store_true",
                         help="connect to unity character",
                         default=False)
 
+    parser.add_argument("--port", type=int, 
+                        help="specify the port of the connection to unity. Have to be the same as in Unity", 
+                        default=5066)
+
+    parser.add_argument("--cam", type=int,
+                        help="specify the camera number if you have multiple cameras",
+                        default=0)
+
     parser.add_argument("--debug", action="store_true",
-                        help="showing the camera's image for debugging",
+                        help="showing raw values of detection in the terminal",
                         default=False)
+
     args = parser.parse_args()
 
     # demo code
