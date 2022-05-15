@@ -29,6 +29,8 @@ port = 5066         # have to be same as unity
 # return the socket connected
 def init_TCP():
     port = args.port
+
+    # '127.0.0.1' = 'localhost' = your computer internal data transmission IP
     address = ('127.0.0.1', port)
     # address = ('192.168.0.107', port)
 
@@ -44,10 +46,10 @@ def init_TCP():
         # quit the script if connection fails (e.g. Unity server side quits suddenly)
         sys.exit()
 
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    # print(socket.gethostbyname(socket.gethostname()))
-    s.connect(address)
-    return s
+    # s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    # # print(socket.gethostbyname(socket.gethostname()))
+    # s.connect(address)
+    # return s
 
 def send_info_to_unity(s, args):
     msg = '%.4f ' * len(args) % args
@@ -69,7 +71,7 @@ def main():
     # use internal webcam/ USB camera
     cap = cv2.VideoCapture(args.cam)
 
-    # IP cam (android only)
+    # IP cam (android only), with the app "IP Webcam"
     # url = 'http://192.168.0.102:4747/video'
     # url = 'https://192.168.0.102:8080/video'
     # cap = cv2.VideoCapture(url)
