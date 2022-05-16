@@ -17,10 +17,9 @@ An Implementation of VTuber (Both 3D and Live2D) using Python and Unity. Support
 * Running **smooth 30 FPS** with **CPU only** for the aformentioned features.
 * Simple and clean UI for adjusting the sensibility of detection in Unity.
 * Saveload mechanism to save and load your preferences in Unity.
-* Including sample (Unity) projects for both 3D and Live2D models
+* Including sample (Unity) projects for both 3D and Live2D models.
+* Support Window and M1 machines.
 * Detailed and thorough explanation videos (with EN and ZH subtitles) [playlist](https://www.youtube.com/playlist?list=PL624GOtU88c4J9rGy7ZWjeSkOvCvuavan)
-
-*Due to Github file size limitation, most of the folders in the unity chan sample project are removed, yet the project can still run*
 
 ## File Explanation
 |File|Description|
@@ -31,7 +30,7 @@ An Implementation of VTuber (Both 3D and Live2D) using Python and Unity. Support
 |stabilizer.py|Implementation of Kalman Filter to stabilize the values.|
 |facial_features.py|Various facial features detection implementation, including blinking, iris detection and mouth movement.|
 |model.txt|The points of the 3D Canonical model used in Mediapipe. [Source file](https://github.com/google/mediapipe/blob/master/mediapipe/modules/face_geometry/data/canonical_face_model.obj)|
-|UnityAssets|Whole Unity Projects (in packages) and Scripts for both 3D (UnityChan) and Live2D (Hiyori) models|
+|UnityAssets|Whole Unity Projects (in packages) and Scripts (old version) for both 3D (UnityChan) and Live2D (Hiyori) models|
 
 
 
@@ -48,20 +47,17 @@ git clone https://github.com/mmmmmm44/VTuber-Python-Unity.git
 cd "VTuber-Python-Unity"
 ```
 
-~~Download the unity packages of sample projects of both live2D and unitychan 3D in the link next to: [Dropbox](https://www.dropbox.com/sh/qh7dcqt0z287idt/AACbljJEcD6knM6JL2uojfIaa?dl=0)~~
-
-~~(last edit of the sample projects: 23-12-2021)~~
-
 ### Setup
 1. Create An empty Unity 3D Project
 
-2. Import either the Live2D or UnityChan3D package to your project. The corresponding SDKs have been included already.
+2. Import either the Live2D or UnityChan3D package to your project. The corresponding SDKs have been included already. (Excpet that I removed the voice files of UnityChan in the UnityChan Unity package due to file size limit in github.)
 
-~~Links for both packages (in a zip file): [Dropbox](https://www.dropbox.com/sh/qh7dcqt0z287idt/AACbljJEcD6knM6JL2uojfIaa?dl=0)~~
+    - _last edit: 16-05-2022_
 
-~~_last edit: 23-12-2021_~~
+3. **[NEW]** In the Game window of Unity, create a 9:16 portrait ratio display mode and save it. Then the UI will return normal. 
+(Or you can adjust the ratio in the AspectGridLayoutCellSize.cs attached on each of the panel Game Object, namely "Setting Panel" and "TCP Setting Panel".)
 
-3. Run the Scene.
+3. Run the Scene. Click the Setting button to switch on the TCP server. There should be a "Waiting for connection..." log message showing in the Console of Unity.
 
 4. Run the following code in terminal
 [content in the bracket is optional]
@@ -72,7 +68,7 @@ python main.py --connect [--debug] [--port PORT]
 5. Enjoy
 
 
-### [Depreciated] Custom Setup (For people who want to import their own 3D/ Live2D model)
+### Custom Setup (YT Tutorial)
 
 #### For Live2D model
 
@@ -131,11 +127,26 @@ _The complete Unity Project with fancy stuffs such as UI system, Save Load Prefe
 
     --connect                            connect to the unity character
 
-    --port PORT                          specify the port of the connection to unity. Have to be the same as in Unity.
+    --port PORT                          specify the port of the connection to 
+                                         unity. Have to be the same as in Unity.
 
-    --cam CAM                            specify the camera number to use if you have multiple cameras connected to the computer
+    --cam CAM                            specify the camera number to use 
+                                         if you have multiple cameras connected
+                                         to the computer.
+                                         (for cv2.VideoCapture(CAM))
 
-    --debug                              show the raw values of the detection in the terminal
+    --debug                              show the raw values of the detection 
+                                         in the terminal
+
+## Examples
+
+Connecting to the Unity Project with default port, showing the sent data.
+    
+    python main.py --connect --debug
+
+Connecting to the Unity Project with custom port (e.g. 5077), showing the sent data.
+
+    python main.py --connect --debug --port 5077
 
 ## Development Environment
 * Python 3.8.5
