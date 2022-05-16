@@ -63,8 +63,10 @@ public class UnityChanController : MonoBehaviour, ISaveable
         autoBlinkScript.enabled = isAutoBlinkActive;
         SetEyes(eye_ratio_open);
 
-        GameObject.FindWithTag("GameController").GetComponent<UISystem>().LoadData();
-        GameObject.FindWithTag("GameController").GetComponent<UISystem>().InitUI();
+        // Commented the following two lines to make it error-free when following the YT Tutorial
+        // A full, updated version which works with the UI system can be found after importing the unity packages to a Unity project
+        // GameObject.FindWithTag("GameController").GetComponent<UISystem>().LoadData();
+        // GameObject.FindWithTag("GameController").GetComponent<UISystem>().InitUI();
 
         InitTCP();
     }

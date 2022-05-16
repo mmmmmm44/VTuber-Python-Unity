@@ -48,31 +48,31 @@ git clone https://github.com/mmmmmm44/VTuber-Python-Unity.git
 cd "VTuber-Python-Unity"
 ```
 
-Download the unity packages of sample projects of both live2D and unitychan 3D in the link next to: [Dropbox](https://www.dropbox.com/sh/qh7dcqt0z287idt/AACbljJEcD6knM6JL2uojfIaa?dl=0) 
+~~Download the unity packages of sample projects of both live2D and unitychan 3D in the link next to: [Dropbox](https://www.dropbox.com/sh/qh7dcqt0z287idt/AACbljJEcD6knM6JL2uojfIaa?dl=0)~~
 
-(last edit of the sample projects: 23-12-2021)
+~~(last edit of the sample projects: 23-12-2021)~~
 
-### Simple Setup
+### Setup
 1. Create An empty Unity 3D Project
 
 2. Import either the Live2D or UnityChan3D package to your project. The corresponding SDKs have been included already.
 
-Links for both packages (in a zip file): [Dropbox](https://www.dropbox.com/sh/qh7dcqt0z287idt/AACbljJEcD6knM6JL2uojfIaa?dl=0)
+~~Links for both packages (in a zip file): [Dropbox](https://www.dropbox.com/sh/qh7dcqt0z287idt/AACbljJEcD6knM6JL2uojfIaa?dl=0)~~
 
-_last edit: 23-12-2021_
+~~_last edit: 23-12-2021_~~
 
 3. Run the Scene.
 
 4. Run the following code in terminal
 [content in the bracket is optional]
 ```
-python main.py --connect [--debug]
+python main.py --connect [--debug] [--port PORT]
 ```
 
 5. Enjoy
 
 
-### Custom Setup (For people who want to import their own 3D/ Live2D model)
+### [Depreciated] Custom Setup (For people who want to import their own 3D/ Live2D model)
 
 #### For Live2D model
 
@@ -93,7 +93,7 @@ Video Walkthrough: [Click Me!](https://youtu.be/3pBc9Wkzzos?t=30)
 7. Run the following code in terminal
 [content in the bracket is optional]
 ```
-python main.py --connect [--debug]
+python main.py --connect [--debug] [--port PORT]
 ```
 
 8. Enjoy
@@ -117,14 +117,25 @@ Video Walkthrough: [Click Me!](https://youtu.be/V6Wd2kPNbPY?t=180)
 7. Run the following code in terminal
 [content in the bracket is optional]
 ```
-python main.py --connect [--debug]
+python main.py --connect [--debug] [--port PORT]
 ```
 
 8. Enjoy
 
 **Make sure you run the Unity Scene first before running the python script**
 
-*Both the python scripts and the unity project can be exported to .exe, which can be run on other computers.*
+_The complete Unity Project with fancy stuffs such as UI system, Save Load Preferences, and custom port UI can be found after importing the Unity Packages provided._
+
+## Options (main.py)
+    -h, --help                           show this help message and exit
+
+    --connect                            connect to the unity character
+
+    --port PORT                          specify the port of the connection to unity. Have to be the same as in Unity.
+
+    --cam CAM                            specify the camera number to use if you have multiple cameras connected to the computer
+
+    --debug                              show the raw values of the detection in the terminal
 
 ## Development Environment
 * Python 3.8.5
