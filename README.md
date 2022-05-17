@@ -55,7 +55,7 @@ cd "VTuber-Python-Unity"
     - _last edit: 16-05-2022_
 
 3. **[NEW]** In the Game window of Unity, create a 9:16 portrait ratio display mode and save it. Then the UI will return normal. 
-(Or you can adjust the ratio in the AspectGridLayoutCellSize.cs attached on each of the panel Game Object, namely "Setting Panel" and "TCP Setting Panel".)
+(Or you can adjust the ratio in the AspectGridLayoutCellSize.cs attached on each of the panel Game Object, namely "Setting Panel" and "TCP Setting Panel".) [Tutorial](https://github.com/mmmmmm44/VTuber-Python-Unity/issues/14)
 
 3. Run the Scene. Click the Setting button to switch on the TCP server. There should be a "Waiting for connection..." log message showing in the Console of Unity.
 
